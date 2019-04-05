@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+#% Author: ville.rantanen@helsinki.fi   2019 01
+
+_help() {
+  echo "
+Make a filtered copy of PNG folder structur
+
+Usage: $SELF [folder_of_folders_of_pngs] [folder_for_output]
+
+"
+  exit
+}
+
+DIR=$( dirname $( readlink -f "$0" ) )
+SELF=$( basename $( readlink -f "$0" ) )
+
+WHITE_RATIO=0.2
+SHARPNESS=0.07
+
+INPUT_FOLDER="$1"
+OUTPUT_FOLDER="$2"
+#In case of missing folder
+if [ -z "$OUTPUT_FOLDER" ]; then _help; fi
+for (( i=1; i<=$#; i++ )); do
+  value=${!i}
+  [[ "$value" = "--help" ]] && _help
+  [[ "$value" = "-h" ]] && _help
+done
+
+if [ ! -d "$INPUT_FOLDER" ]; then
+  echo "No such folder: $INPUT_FOLDER"
+  exit 1
+fi
+
+mkdir -p "$OUTPUT_FOLDER"
+set -e
+for d in "$INPUT_FOLDER"/*; do
+  if [ ! -d "$d" ]; then continue; fi
+  to=$( basename "$d" )
+  if [ -d "$OUTPUT_FOLDER/$to" ]; then
+    echo "$d already filtered. Remove output to re-filter"
+    continue
+  fi
+  mkdir -p "$OUTPUT_FOLDER/$to"
+  #Python fuction
+  for f in "$d"/*png; do
+    "$DIR"/inspect_quality.py \
+        --white-ratio $WHITE_RATIO \
+        --white 245 \
+        --sharpness $SHARPNESS \
+         "$f" && \
+      cp -lv "$f" "$OUTPUT_FOLDER/$to/"
+  done
+done
+
+
+echo "Conversion completed."

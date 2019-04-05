@@ -1,0 +1,50 @@
+#!/bin/bash
+#
+#% Author: ville.rantanen@helsinki.fi   2019 01
+
+#Display message on screen 
+_help() {
+  echo "
+MRXS dataset converter
+
+Usage: $SELF [folder_of_mrxs_files] [folder_for_output]
+
+"
+  exit
+}
+
+DIR=$( dirname $( readlink -f "$0" ) )
+SELF=$( basename $( readlink -f "$0" ) )
+  
+MRXS_FOLDER="$1"
+OUTPUT_FOLDER="$2"
+
+#In case of missing folder
+if [ -z "$OUTPUT_FOLDER" ]; then _help; fi
+for (( i=1; i<=$#; i++ )); do
+  value=${!i}
+  [[ "$value" = "--help" ]] && _help
+  [[ "$value" = "-h" ]] && _help
+done
+
+if [ ! -d "$MRXS_FOLDER" ]; then 
+  echo "No such folder: $MRXS_FOLDER"
+  exit 1
+fi
+
+mkdir -p "$OUTPUT_FOLDER"
+set -e
+for m in "$MRXS_FOLDER"/*mrxs; do
+  b=$( basename "$m" )
+  t=${b%.mrxs}
+  t=${t// /_}
+  if [ -d "$OUTPUT_FOLDER/$t" ]; then
+    echo "$b already converted"
+    continue
+  fi
+  echo "$b -> $t" 
+  "$DIR"/mrxs_export.py -l 0 -w 1250 "$m" "$OUTPUT_FOLDER/$t" #Python function
+done
+
+
+echo "Conversion completed."
