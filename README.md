@@ -1,6 +1,6 @@
 # Chemotherapeutic response prediction using histopathological image analysis
 
-This repository contains Python and MATLAB source codes of the project: "Chemotherapeutic response prediction using histopathological image analysis". This pipeline allows to extract morphological and texture features from hematoxylin and eosin stained histopathological images, in order to use them to train classifiers. The aim of this study is to find the better features, single or combined, to predict the patient's response after the platinum-taxane chemotherapy.
+This repository contains Python and MATLAB source codes of my Master Thesis project: "Chemotherapeutic response prediction using histopathological image analysis". This pipeline allows to extract morphological and texture features from hematoxylin and eosin stained histopathological images, in order to use them to train classifiers. The aim of this study is to find the better features, single or combined, to predict the patient's response after the platinum-taxane chemotherapy.
 
 NB. Because the best results were obtained for the combination of dictionary, the combination of the features before the BoW is not present in this pipeline.
 
